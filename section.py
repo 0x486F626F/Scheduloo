@@ -8,6 +8,8 @@ class Section(object):
 		self.number = number
 		self.events = []
 		today = firstday
+		self.weekly = weekly
+		self.onetime = onetime
 		while(today <= lastday):
 			for e in weekly:
 				start = Date(today.year, today.month, today.day + e[0] - 1, 
@@ -19,3 +21,21 @@ class Section(object):
 		for e in onetime:
 			self.events.append(e)
 		self.events.sort()
+
+	def __lt__(self, other):
+		return self.number < other.number
+
+	def printall(self):
+		print(self.number)
+		for e in self.events:
+			e.print()
+
+	def print(self):
+		print(self.number)
+		for e in self.weekly:
+			print("%s %d %02d:%02d~%02d:%02d" 
+				% (e[1].description, e[0], 
+					e[1].start.hour, e[1].start.minute,
+					e[1].end.hour, e[1].end.minute))
+		for e in self.onetime:
+			e.print()
