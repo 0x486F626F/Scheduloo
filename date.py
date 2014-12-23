@@ -47,8 +47,8 @@ class Date(object):
 			self.month = 1
 			self.year += 1
 
-	def print(self):
-		print("%d-%02d-%02d %02d:%02d" % (self.year, self.month, self.day, self.hour, self.minute))
+	def printall(self):
+		print "%d-%02d-%02d %02d:%02d" % (self.year, self.month, self.day, self.hour, self.minute)
 
 def days_in_month(year, month):
 	if(month == 2): 
