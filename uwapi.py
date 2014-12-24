@@ -13,6 +13,8 @@ def course_schedule(term, subject, catalog):
 	tst = []
 	for section in course:
 		desc = str(section['section'])
+		if(section['campus'] == 'ONLN ONLINE'):
+			continue
 		related = ['00' + str(section['associated_class']), section['related_component_1'], section['related_component_2']]
 		for i in range(3):
 			if(related[i] and len(str(related[i])) == 3):

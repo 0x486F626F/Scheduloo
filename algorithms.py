@@ -23,10 +23,8 @@ def course_scheme(term, subject, catalog):
 						if(not meet_req):
 							related_req = False
 			if(related_req):
-				print scheme[0]
-				print scheme[1]
-				print scheme[2]
+				for i in scheme:
+					print i
 				print
 	
 	dfs(0, [])
-
