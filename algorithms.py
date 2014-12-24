@@ -12,11 +12,21 @@ def course_scheme(term, subject, catalog):
 				tmp.append(i)
 				dfs(d + 1, tmp)
 		else:
+			related_req = True
 			for i in scheme:
-				print i
-			print
+				for related in i[1]:
+					if(related):
+						meet_req = False
+						for j in scheme:
+							if(related == j[0][4:]):
+								meet_req = True
+						if(not meet_req):
+							related_req = False
+			if(related_req):
+				print scheme[0]
+				print scheme[1]
+				print scheme[2]
+				print
 	
 	dfs(0, [])
 
-
-course_scheme(1151, "CS", 241)
