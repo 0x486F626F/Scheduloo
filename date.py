@@ -67,3 +67,11 @@ def is_leap(year):
 		return 1
 	else:
 		return 0
+
+def get_first_day(term):
+	if(term == 1151):
+		return Date(2015, 1, 5, 0, 0)
+
+def get_last_day(term):
+	if(term == 1151):
+		return Date(2015, 4, 6, 0, 0)

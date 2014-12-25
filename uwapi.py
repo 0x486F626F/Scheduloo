@@ -1,11 +1,11 @@
 from uwaterlooapi	import UWaterlooAPI
-from date			import Date
+from date			import Date, get_first_day, get_last_day
 from event			import Event
 uw = UWaterlooAPI(api_key="123afda14d0a233ecb585591a95e0339")
-firstday = Date(2015, 1, 5, 0, 0)
-lastday = Date(2015, 4, 6, 0, 0)
 
 def course_schedule(term, subject, catalog):
+	firstday = get_first_day(term)
+	lastday = get_last_day(term)
 	course = uw.term_course_schedule(term, subject, catalog)
 	lec = []
 	lab = []
