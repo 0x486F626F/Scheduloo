@@ -55,7 +55,11 @@ def expand(term, scheme):
 
 	return events
 
-schemes = course_scheme(1151, "MATH", 136)
-events = expand(1151, schemes[0])
-for i in events:
-	i.debug()
+term = int(raw_input("Term = "))
+num_courses = int(raw_input("Number of Courses = "))
+courses = []
+for i in range(num_courses):
+	ipt = raw_input("Course 1: ").split()
+	courses.append([ipt[0], int(ipt[1])])
+
+print courses
