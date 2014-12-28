@@ -30,7 +30,7 @@ def course_schedule(term, subject, catalog):
 			if(c['date']['end_date']):
 				m = int(c['date']['end_date'][:2])
 				d = int(c['date']['end_date'][3:])
-				onetime.append(Event(section['section'], 
+				onetime.append(Event(subject + " " + str(catalog) + " " + section['section'], 
 					Date(lastday.year, m, d, start[0], start[1]),
 					Date(lastday.year, m, d, start[0], start[1]), 1))
 			else:

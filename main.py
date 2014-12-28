@@ -32,7 +32,7 @@ def course_scheme(term, subject, catalog):
 	dfs(0, [])
 	return schemes
 
-def expand(term, scheme):
+def expand(term, subject, catalog, scheme):
 	events = []
 	firstday = get_first_day(term)
 	lastday = get_last_day(term)
@@ -46,7 +46,8 @@ def expand(term, scheme):
 					end = Date(today.year, today.month, today.day, weekly[3], weekly[4])
 					start.add_day(i)
 					end.add_day(i)
-					events.append(Event(event[0], start, end, weekly[5]))
+					desc = subject + " " + str(catalog) + " " + event[0]
+					events.append(Event(desc, start, end, weekly[5]))
 		today.add_day(7)
 	for event in scheme:
 		for onetime in event[3]:
@@ -57,9 +58,16 @@ def expand(term, scheme):
 
 term = int(raw_input("Term = "))
 num_courses = int(raw_input("Number of Courses = "))
-courses = []
+schemes = []
+subjects = []
 for i in range(num_courses):
-	ipt = raw_input("Course 1: ").split()
-	courses.append([ipt[0], int(ipt[1])])
+	ipt = raw_input("Course %d: " % (i + 1)).split()
+	subjects.append([ipt[0], int(ipt[1])])
+	schemes.append(course_scheme(term, subjects[i][0], subjects[i][1]))
 
-print courses
+courses = []
+for i in range(len(schemes)):
+	courses += expand(term, subjects[i][0], subjects[i][1], schemes[i][0])
+courses.sort()
+for i in courses:
+	i.debug()
