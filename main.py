@@ -1,6 +1,6 @@
 from uwapi	import course_schedule
 from date	import Date, get_first_day, get_last_day
-from event	import Event
+from event	import Event, conflict
 from copy	import deepcopy
 
 def course_scheme(term, subject, catalog):
@@ -65,9 +65,30 @@ for i in range(num_courses):
 	subjects.append([ipt[0], int(ipt[1])])
 	schemes.append(course_scheme(term, subjects[i][0], subjects[i][1]))
 
-courses = []
-for i in range(len(schemes)):
-	courses += expand(term, subjects[i][0], subjects[i][1], schemes[i][0])
-courses.sort()
-for i in courses:
-	i.debug()
+all_schemes = []
+def try_scheme(d, scheme):
+	if(d < num_courses):
+		for i in schemes[d]:
+			next_scheme = scheme[:]
+			next_scheme.append(i)
+			try_scheme(d + 1, next_scheme)
+	else:
+		tmp = []
+		for i in range(num_courses):
+			tmp += expand(term, subjects[i][0], subjects[i][1], scheme[i])
+		tmp.sort()
+		all_schemes.append(tmp)
+	
+def analysis(events):
+	for i in events:
+		i.debug()
+	i = 0
+	l = len(events)
+	while(i < l - 1):
+		j = i + 1
+		while(conflict(events[i], events[j])): j += 1
+
+try_scheme(0, [])
+
+analysis(all_schemes[0])
+
