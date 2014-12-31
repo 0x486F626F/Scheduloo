@@ -39,13 +39,14 @@ class Date(object):
 				+ (self.year - other.year) * (356 + is_leap(self. year)) * 24 * 60
 	
 	def add_day(self, d):
-		self.day += d
-		if(self.day > days_in_month(self.year, self.month)):
-			self.day = 1
-			self.month += 1
-		if(self.month > 12):
-			self.month = 1
-			self.year += 1
+		for i in range(d):
+			self.day += 1
+			if(self.day > days_in_month(self.year, self.month)):
+				self.day = 1
+				self.month += 1
+			if(self.month > 12):
+				self.month = 1
+				self.year += 1
 
 	def printall(self):
 		print "%d-%02d-%02d %02d:%02d" % (self.year, self.month, self.day, self.hour, self.minute)
@@ -74,4 +75,4 @@ def get_first_day(term):
 
 def get_last_day(term):
 	if(term == 1151):
-		return Date(2015, 4, 6, 0, 0)
+		return Date(2015, 4, 6, 23, 59)

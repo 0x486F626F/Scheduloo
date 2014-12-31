@@ -47,13 +47,16 @@ def expand(term, subject, catalog, scheme):
 					start.add_day(i)
 					end.add_day(i)
 					desc = subject + " " + str(catalog) + " " + event[0]
-					events.append(Event(desc, start, end, weekly[5]))
+					if(start == lastday):
+						start.printall()
+						today.printall()
+					if(start <= lastday):
+						events.append(Event(desc, start, end, weekly[5]))
 		today.add_day(7)
 	for event in scheme:
 		for onetime in event[3]:
 			events.append(deepcopy(onetime))
 	events.sort()
-
 	return events
 
 term = int(raw_input("Term = "))
@@ -80,15 +83,18 @@ def try_scheme(d, scheme):
 		all_schemes.append(tmp)
 	
 def analysis(events):
-	for i in events:
-		i.debug()
-	i = 0
 	l = len(events)
-	while(i < l - 1):
-		j = i + 1
-		while(conflict(events[i], events[j])): j += 1
+	lost = 0
+	gain = 0
+	for i in range(l):
+		gain += events[i].value
+	for i in range(l):
+		for j in range(l):
+			if(i != j):
+				lost += min(events[i].value, events[j].value) * conflict(events[i], events[j])
+	return [gain - lost, lost]
 
 try_scheme(0, [])
 
-analysis(all_schemes[0])
-
+class Evaluation(Object):
+	__init__(self, 
