@@ -87,14 +87,39 @@ def analysis(events):
 	lost = 0
 	gain = 0
 	for i in range(l):
-		gain += events[i].value
+		gain += events[i].value * (events[i].end - events[i].start)
 	for i in range(l):
-		for j in range(l):
-			if(i != j):
-				lost += min(events[i].value, events[j].value) * conflict(events[i], events[j])
+		for j in range(i + 1, l):
+			c = conflict(events[i], events[j])
+			if(c == 0): break
+			lost += min(events[i].value, events[j].value) * c 
 	return [gain - lost, lost]
 
 try_scheme(0, [])
 
-class Evaluation(Object):
-	__init__(self, 
+class Evaluation(object):
+	def __init__(self, events, gain, lost):
+		self.events = events
+		self.gain = gain
+		self.lost = lost
+	def __lt__(self, other):
+		if(self.lost != other.lost):
+			return self.lost < other.lost
+		return self.gain > other.gain
+
+evaluations = []
+for i in range(len(all_schemes)):
+	print "%d/%d" % (i, len(all_schemes))
+	grade = analysis(all_schemes[i])
+	print grade[0], grade[1]
+	evaluations.append(Evaluation(all_schemes[i], grade[0], grade[1]))
+
+evaluations.sort()
+for i in evaluations:
+	if(i.lost == 0):
+		print i.gain, i.lost
+print
+
+print evaluations[0].gain, evaluations[0].lost
+for i in evaluations[0].events:
+	i.debug()
