@@ -44,8 +44,8 @@ def expand(term, subject, catalog, scheme):
 				for i in weekly[0]:
 					start = Date(today.year, today.month, today.day, weekly[1], weekly[2])
 					end = Date(today.year, today.month, today.day, weekly[3], weekly[4])
-					start.add_day(i)
-					end.add_day(i)
+					start.add_day(i - 1)
+					end.add_day(i - 1)
 					desc = subject + " " + str(catalog) + " " + event[0]
 					if(start == lastday):
 						start.printall()

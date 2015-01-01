@@ -13,6 +13,8 @@ def course_schedule(term, subject, catalog):
 	tst = []
 	for section in course:
 		desc = str(section['section'])
+		value = raw_input("%s %d %s value = " % (subject, catalog, desc))
+		value = int(value)
 		if(section['campus'] == 'ONLN ONLINE'):
 			continue
 		related = ['00' + str(section['associated_class']), section['related_component_1'], section['related_component_2']]
@@ -32,7 +34,7 @@ def course_schedule(term, subject, catalog):
 				d = int(c['date']['end_date'][3:])
 				onetime.append(Event(subject + " " + str(catalog) + " " + section['section'], 
 					Date(lastday.year, m, d, start[0], start[1]),
-					Date(lastday.year, m, d, start[0], start[1]), 1))
+					Date(lastday.year, m, d, start[0], start[1]), value))
 			else:
 				w = c['date']['weekdays']
 				weekdays = []
@@ -53,7 +55,7 @@ def course_schedule(term, subject, catalog):
 						weekdays.append(5)
 						w = w[1:]
 				weekdays.sort()
-				weekly.append([weekdays, start[0], start[1], end[0], end[1], 1])
+				weekly.append([weekdays, start[0], start[1], end[0], end[1], value])
 		all_events = [desc, related, weekly, onetime]
 		if(desc[:3] == "LEC"): lec.append(all_events)
 		elif(desc[:3] == "LAB"): lab.append(all_events)
