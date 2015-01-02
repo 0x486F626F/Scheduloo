@@ -65,7 +65,7 @@ schemes = []
 subjects = []
 for i in range(num_courses):
 	ipt = raw_input("Course %d: " % (i + 1)).split()
-	subjects.append([ipt[0], int(ipt[1])])
+	subjects.append([ipt[0], ipt[1]])
 	schemes.append(course_scheme(term, subjects[i][0], subjects[i][1]))
 
 all_schemes = []

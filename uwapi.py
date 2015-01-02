@@ -2,6 +2,7 @@ from uwaterlooapi	import UWaterlooAPI
 from date			import Date, get_first_day, get_last_day
 from event			import Event
 uw = UWaterlooAPI(api_key="123afda14d0a233ecb585591a95e0339")
+print uw.api_usage()
 
 def course_schedule(term, subject, catalog):
 	firstday = get_first_day(term)
@@ -13,7 +14,7 @@ def course_schedule(term, subject, catalog):
 	tst = []
 	for section in course:
 		desc = str(section['section'])
-		value = raw_input("%s %d %s value = " % (subject, catalog, desc))
+		value = raw_input("%s %s %s value = " % (subject, catalog, desc))
 		value = int(value)
 		if(section['campus'] == 'ONLN ONLINE'):
 			continue
