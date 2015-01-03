@@ -1,8 +1,8 @@
 from uwaterlooapi	import UWaterlooAPI
 from date			import Date, get_first_day, get_last_day
 from event			import Event
+from os.path		import isfile
 uw = UWaterlooAPI(api_key="123afda14d0a233ecb585591a95e0339")
-print uw.api_usage()
 
 def course_schedule(term, subject, catalog):
 	firstday = get_first_day(term)
