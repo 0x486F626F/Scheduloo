@@ -1,4 +1,5 @@
 import event
+import datetime
 
 class Scheduloo:
 	def __init__(self, db):
@@ -34,4 +35,35 @@ class Scheduloo:
 					preferred_sections.append(related_sections)
 			print preferred_sections
 			self.preferred_sections.append(preferred_sections)
-					
+	
+	def make_event_list(self, start_date, end_date, time_schedule):
+		study_days = []
+		event_list = []	
+		# get weekdays that have courses
+		weekly_class = time_schedule[0]
+		for section in weekly_class:
+			for weekdays in section[0]:
+				if not weekdays in study_days:
+					study_days.append(weekdays)
+		study_days.sort()
+		# separating the weekly class into specific date
+		now = start_date
+		i = 0
+		while now <= end_date:
+			today = now.isoweekday()
+			if (today in study_days):
+				for section in weekly_class:
+					if (today in section[0]):
+						event_list.append([now, section[1], section[2]])
+				incre = (study_days[i + 1] - study_days[i] + 7) % 7
+				now += datetime.timedelta(days = incre)
+			else: now += datetime.timedelta(days = 1)
+		i = (i + 1) % len(study_days)
+		# adding the one-time courses
+		if (len(time_schedule) > 1):
+			event_list = event_list + time_schedule[1]
+		event_list.sort()
+		return event_list
+
+
+
