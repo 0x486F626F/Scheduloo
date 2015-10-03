@@ -98,7 +98,7 @@ class value_tree(tree): #{{{
 			self._cover(self.root, self.l_key, self.r_key, begin, end, value)
 	#}}}
 
-def __preorder(events, values):
+def __preorder(events, values): #{{{
 	if len(events) < 3:
 		result = []
 		for i in range(len(events)):
@@ -108,8 +108,9 @@ def __preorder(events, values):
 	return [[events[mid], values[mid]]] + \
 			__preorder(events[:mid], values[:mid]) + \
 			__preorder(events[mid + 1:], values[mid + 1:])
+	#}}}
 
-def evaluate(events, values):
+def evaluate(events, values): #{{{
 	l_key = sorted(events, key = lambda event: event.start_time)[0].start_time
 	r_key = sorted(events, key = lambda event: event.end_time)[-1].end_time
 	t_cover = cover_tree(l_key, r_key)
@@ -126,4 +127,4 @@ def evaluate(events, values):
 		value_sum += diff * events_list[1][i][2]
 		conflicting_time += diff * (events_list[0][i][2] - 1)
 	return [value_sum, conflicting_time]
-
+	#}}}

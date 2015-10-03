@@ -5,14 +5,15 @@ class Scheduloo:
 	def __init__(self, db):
 		self.db = db
 
-	def set_courses(self, courses):
+	def set_courses(self, courses): #{{{
 		self.courses = courses
 		self.opening_sections = []
 		for course in courses:
 			self.db.update_course(course[0], course[1])
 			self.opening_sections.append(self.db.get_opening_sections(course[0], course[1]))
+	#}}}
 
-	def set_ratings(self, ratings, max_conflicting):
+	def set_ratings(self, ratings): #{{{
 		self.ratings = []
 		self.max_conflicting = max_conflicting
 		for i in range(len(self.opening_sections)):
@@ -29,14 +30,15 @@ class Scheduloo:
 				related_sections = self.db.get_related_sections(self.courses[i][0], self.courses[i][1], main)
 				for j in range(len(related_sections)):
 					for section in related_sections[j]:
-						if self.ratings[i][section] == 0:
+						if self.ratings[i][section] < 0:
 							related_sections[j].remove(section)
 				if [] not in related_sections:	
 					preferred_sections.append(related_sections)
 			print preferred_sections
 			self.preferred_sections.append(preferred_sections)
+	#}}}
 	
-	def make_event_list(self, start_date, end_date, time_schedule):
+	def make_event_list(self, start_date, end_date, time_schedule): #{{{
 		study_days = []
 		event_list = []	
 		# get weekdays that have courses
@@ -64,6 +66,12 @@ class Scheduloo:
 			event_list = event_list + time_schedule[1]
 		event_list.sort()
 		return event_list
+	# }}}
 
-
-
+	def make_combination(self, current, idx, lists): #{{{
+		if idx == len(lists):
+			self.combination.append(current)
+		else:
+			for component in lists[idx]:
+				self.make_combination(current + [component], idx + 1, lists)
+		#}}}
