@@ -11,11 +11,12 @@ class Scheduloo:
 		for course in courses:
 			self.db.update_course(course[0], course[1])
 			self.opening_sections.append(self.db.get_opening_sections(course[0], course[1]))
+		for course in courses:
+			self.db.update_course(course[0], course[1])
 	#}}}
 
 	def set_ratings(self, ratings): #{{{
 		self.ratings = []
-		self.max_conflicting = max_conflicting
 		for i in range(len(self.opening_sections)):
 			rating_pairs = {}
 			for j in range(len(self.opening_sections[i])):
@@ -34,7 +35,6 @@ class Scheduloo:
 							related_sections[j].remove(section)
 				if [] not in related_sections:	
 					preferred_sections.append(related_sections)
-			print preferred_sections
 			self.preferred_sections.append(preferred_sections)
 	#}}}
 	
@@ -75,3 +75,29 @@ class Scheduloo:
 			for component in lists[idx]:
 				self.make_combination(current + [component], idx + 1, lists)
 		#}}}
+	
+	def evaluate_all_combinations(self):
+		all_combinations = []
+		for course in self.preferred_sections:
+			course_combinations = []
+			for section in course:
+				self.combination = []
+				self.make_combination([], 0, section)
+				course_combinations += self.combination
+			all_combinations.append(course_combinations)
+		self.combination = []
+		self.make_combination([], 0, all_combinations)
+		all_combinations = self.combination
+		
+		for combination in all_combinations:
+			for i in range(len(self.courses)):
+				for section in combination[i]:
+					print self.courses[i][0], self.courses[i][1], section
+					time_schedule = self.db.get_time_schedule(
+							self.courses[i][0],
+							self.courses[i][1],
+							section)
+					self.make_event_list(
+							datetime.date(2015, 9, 14),
+							datetime.date(2015, 12, 4),
+							time_schedule)
