@@ -128,6 +128,7 @@ class Scheduloo:
 			plan = evaluation.evaluate(all_event_list, values) + plan
 			if (plan[1] <= 0 and plan[0] > max_value):
 				all_plan = [plan]
+				max_value = plan[0]
 			if (plan[1] <= 0 and plan[0] == max_value):
 				all_plan += [plan]
 		return all_plan
