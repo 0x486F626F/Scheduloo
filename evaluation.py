@@ -116,6 +116,7 @@ def evaluate(events, values): #{{{
 	t_cover = cover_tree(l_key, r_key)
 	t_value = value_tree(l_key, r_key)
 	event_value_pairs = __preorder(events, values)
+	events_list = [t_cover.query(l_key, r_key), t_value.query(l_key, r_key)]
 	for pair in event_value_pairs:
 		t_cover.cover(pair[0].start_time, pair[0].end_time)
 		t_value.cover(pair[0].start_time, pair[0].end_time, pair[1])

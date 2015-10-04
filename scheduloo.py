@@ -29,10 +29,11 @@ class Scheduloo:
 		for i in range(len(self.courses)):
 			preferred_sections = []
 			for main in self.opening_sections[i][0]:
-				related_sections = self.db.get_related_sections(self.courses[i][0], self.courses[i][1], main)
+				related_sections = self.db.get_related_sections(
+						self.courses[i][0], self.courses[i][1], main)
 				for j in range(len(related_sections)):
 					for section in related_sections[j]:
-						if self.ratings[i][section] < 0:
+						if self.ratings[i][section] == 0:
 							related_sections[j].remove(section)
 				if [] not in related_sections:	
 					preferred_sections.append(related_sections)
@@ -104,12 +105,15 @@ class Scheduloo:
 		self.make_combination([], 0, all_combinations)
 		all_combinations = self.combination
 		
+		all_plan = []
+		max_value = 0
 		for combination in all_combinations:
 			all_event_list = []
 			values = []
+			plan = []
 			for i in range(len(self.courses)):
 				for section in combination[i]:
-					print self.courses[i][0], self.courses[i][1], section
+					plan.append(self.courses[i][0]+self.courses[i][1]+section)
 					time_schedule = self.db.get_time_schedule(
 							self.courses[i][0],
 							self.courses[i][1],
@@ -121,6 +125,9 @@ class Scheduloo:
 					all_event_list += event_list
 					for j in range(len(event_list)):
 						values.append(self.ratings[i][section])
-			print len(all_event_list), len(values)
-			print all_event_list
-			print evaluation.evaluate(all_event_list, values)
+			plan = evaluation.evaluate(all_event_list, values) + plan
+			if (plan[1] <= 0 and plan[0] > max_value):
+				all_plan = [plan]
+			if (plan[1] <= 0 and plan[0] == max_value):
+				all_plan += [plan]
+		return all_plan
