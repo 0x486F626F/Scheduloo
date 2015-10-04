@@ -6,6 +6,11 @@ class event:
 		self.start_time = datetime.datetime.combine(date, start_time)
 		self.end_time = datetime.datetime.combine(date, end_time)
 	
+	def __lt__(self, other):
+		if self.date != other.date:
+			return self.date < other.date
+		return self.start_time < other.start_time
+	
 def conflicting_time(event1, event2):
 	if (event1.start_time < event2.start_time):
 		return max(datetime.timedelta(minutes = 0), 

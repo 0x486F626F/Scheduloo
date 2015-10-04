@@ -59,7 +59,10 @@ class Scheduloo:
 				if (today in study_days):
 					for section in weekly_class:
 						if (today in section[0]):
-							event_list.append([now, section[1], section[2]])
+							event_list.append(event.event(now,
+								datetime.datetime.strptime(section[1],
+									'%H:%M').time(),
+								datetime.datetime.strptime(section[2],'%H:%M').time()))
 					incre = 0
 					if (len(study_days) > 1):
 						incre = (study_days[i + 1] - study_days[i] + 7) % 7
@@ -68,8 +71,14 @@ class Scheduloo:
 				else: now += datetime.timedelta(days = 1)
 			i = (i + 1) % len(study_days)
 		# adding the one-time courses
-		if (len(time_schedule) > 1):
-			event_list = event_list + time_schedule[1]
+		if not (time_schedule[1] == []):
+			one_time_list = []
+			for course in time_schedule[1]:
+				one_time_list.append(event.event(course[0],
+					datetime.datetime.strptime(course[1],'%H:%M').time(),
+					datetime.datetime.strptime(course[2],'%H:%M').time()))
+
+			event_list = event_list + one_time_list
 		event_list.sort()
 		return event_list
 	# }}}
@@ -96,6 +105,8 @@ class Scheduloo:
 		all_combinations = self.combination
 		
 		for combination in all_combinations:
+			all_event_list = []
+			values = []
 			for i in range(len(self.courses)):
 				for section in combination[i]:
 					print self.courses[i][0], self.courses[i][1], section
@@ -103,7 +114,13 @@ class Scheduloo:
 							self.courses[i][0],
 							self.courses[i][1],
 							section)
-					print evaluation.evaluate(self.make_event_list(
+					event_list = self.make_event_list(
 							datetime.date(2015, 9, 14),
 							datetime.date(2015, 12, 4),
-							time_schedule))
+							time_schedule)
+					all_event_list += event_list
+					for j in range(len(event_list)):
+						values.append(self.ratings[i][section])
+			print len(all_event_list), len(values)
+			print all_event_list
+			print evaluation.evaluate(all_event_list, values)
