@@ -16,22 +16,22 @@ class GraphSolver:
 				each.available = v;
 	#}}}
 	
-	def __init__(self, max_result = 10):
-		self.max_result = max_result
+	def __init__(self, num_samples = 10):
+		self.num_samples = num_samples
 		self.events = []
 		self.index_dict = {}
 
 	def __search_all(self, idx, current_list, num_event):
-		#if len(self.search_result) >= self.max_result: return None 
+		if len(self.search_result) >= self.num_samples: return None 
+		if len(current_list) > num_event: return None
 		if idx == len(self.events):
 			if len(current_list) == num_event: 
 				value = 0
 				for each in current_list:
 					value += each.value
-				print value
-				if value >= self.highest_value:
+				if value > self.highest_value:
 					self.highest_value = value
-				self.search_result.append(current_list)
+				self.search_result.append([current_list, value])
 		else:
 			event = self.events[idx]
 			if event.available:
@@ -53,11 +53,10 @@ class GraphSolver:
 		self.events[idx1].add_edge(self.events[idx2])
 		self.events[idx2].add_edge(self.events[idx1])
 
-	def search_all(self, num_event):
+	def search_all(self, num_event, num_samples):
+		self.num_samples = num_samples
 		self.search_result = []
 		self.highest_value = 0
 		self.__search_all(0, [], num_event)
-		print self.highest_value, len(self.search_result)
-		for each in self.search_result[0]:
-			print each.name
+		self.search_result = sorted(self.search_result, key = lambda a: - a[1])
 		return self.search_result

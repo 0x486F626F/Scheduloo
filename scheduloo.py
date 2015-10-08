@@ -1,6 +1,7 @@
 import datetime
 import evaluation
 import event
+import sets
 
 class Scheduloo:
 	def __init__(self, db):
@@ -17,14 +18,16 @@ class Scheduloo:
 	#}}}
 
 	def add_conflict(self, key1, key2):
-		if key1 not in self.conflicts and key2 not in self.conflicts:
-			self.conflicts[key1] = key2
+		pair1 = [key1, key2]
+		pair2 = [key2, key1]
+		if pair1 in self.conflicts or pair2 in self.conflicts: return None
+		self.conflicts.append(pair1)
 
 	def set_solver(self, ratings): #{{{
 		self.solver = evaluation.GraphSolver()
 		self.total_component = 0
 		all_sections = []
-		self.conflicts = {}
+		self.conflicts = []
 		for i in range(len(self.opening_sections)):
 			course_name = self.courses[i][0] + self.courses[i][1]
 			for j in range(len(self.opening_sections[i])):
@@ -52,7 +55,8 @@ class Scheduloo:
 		for section in all_sections:
 			self.solver.add_event(section[0] + section[1] + section[2], section[3])
 		for key in self.conflicts:
-			self.solver.add_conflict(key, self.conflicts[key])
+			self.solver.add_conflict(key[0], key[1])
+			
 		for i in range(len(all_sections)):
 			for j in range(i):
 				name1 = all_sections[i][0] + \
@@ -87,7 +91,6 @@ class Scheduloo:
 		return schedule
 	#}}}
 
-	def search_all(self):
-		print self.total_component
-		result = self.solver.search_all(self.total_component)
+	def search_all(self, num_plans = 10):
+		result = self.solver.search_all(self.total_component, num_plans)
 		return result

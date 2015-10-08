@@ -3,6 +3,7 @@ import uw_course_db
 import scheduloo
 import os
 import sqlite3
+import event
 
 path = 'db/'
 
@@ -30,6 +31,7 @@ courseDB = uw_course_db.UWCourseDB(int(raw_input("Term: ")),
 
 tool = scheduloo.Scheduloo(courseDB)
 
+
 courses = []
 n = int(raw_input("Number of courses: "))
 for i in range(n):
@@ -49,7 +51,13 @@ for i in range(n):
 	values.append(value)
 
 tool.set_courses(courses)	
-tool.set_ratings(values)
-result = tool.evaluate_all_combinations()
-for each in result:
-	print each
+tool.set_solver(values)
+result = tool.search_all(10000)
+
+for i in range(min(5, len(result))):
+	plan = result[i]
+	print "Value ", plan[1]
+	plan = sorted(plan[0], key = lambda Vertex: Vertex.name)
+	for section in plan:
+		print section.name
+	print "================="
