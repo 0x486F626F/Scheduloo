@@ -4,6 +4,7 @@ import scheduloo
 import os
 import sqlite3
 import event
+import rating
 
 path = 'db/'
 
@@ -31,6 +32,7 @@ courseDB = uw_course_db.UWCourseDB(int(raw_input("Term: ")),
 
 tool = scheduloo.Scheduloo(courseDB)
 
+ratings = rating.RatingRecords(courseDB.term) 
 
 courses = []
 n = int(raw_input("Number of courses: "))
@@ -45,8 +47,10 @@ for i in range(n):
 	for component in section:
 		each = []
 		for event in component:
-			each.append(int(raw_input("Value of " + courses[i][0] + " " + 
+			rate = (int(raw_input("Value of " + courses[i][0] + " " + 
 				courses[i][1] + " " + event + ": ")))
+			ratings.update_section(courses[i][0], courses[i][1], event, rate)
+			each.append(rate)
 		value.append(each)
 	values.append(value)
 
