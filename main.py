@@ -1,5 +1,5 @@
 import uwaterlooapi
-import uw_course_db
+import uwcoursedb
 import scheduloo
 import os
 import sqlite3
@@ -26,7 +26,7 @@ def get_apikey():
 
 apikey = get_apikey()
 
-courseDB = uw_course_db.UWCourseDB(int(raw_input("Term: ")),
+courseDB = uwcoursedb.UWCourseDB(int(raw_input("Term: ")),
 		uwaterlooapi.UWaterlooAPI(api_key = apikey))
 
 tool = scheduloo.Scheduloo(courseDB)

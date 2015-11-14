@@ -4,7 +4,7 @@ class GraphSolver:
 		def __init__(self, name, value):
 			self.name = name
 			self.value = value;
-			self.available = True;
+			self.available = 0;
 			self.edges = []
 
 		def add_edge(self, other):
@@ -13,7 +13,7 @@ class GraphSolver:
 
 		def update_neighbours(self, v):
 			for each in self.edges:
-				each.available = v;
+				each.available = min(each.available + v, 0);
 	#}}}
 	
 	def __init__(self, num_samples = 10):
@@ -33,11 +33,11 @@ class GraphSolver:
 					self.highest_value = value
 				self.search_result.append([current_list, value])
 		else:
-			event = self.events[idx]
-			if event.available:
-				event.update_neighbours(False)
-				self.__search_all(idx + 1, current_list + [event], num_event)
-				event.update_neighbours(True)
+			if self.events[idx].available == 0:
+				self.events[idx].update_neighbours(-1)
+				self.__search_all(idx + 1, 
+						current_list + [self.events[idx]], num_event)
+				self.events[idx].update_neighbours(1)
 			self.__search_all(idx + 1, current_list, num_event)
 
 
@@ -48,6 +48,7 @@ class GraphSolver:
 	def add_conflict(self, name1, name2):
 		if name1 not in self.index_dict or name2 not in self.index_dict:
 			return None
+		print name1, name2
 		idx1 = self.index_dict[name1]
 		idx2 = self.index_dict[name2]
 		self.events[idx1].add_edge(self.events[idx2])
