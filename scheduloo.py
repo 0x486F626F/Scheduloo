@@ -113,11 +113,11 @@ class Scheduloo:
 			subject_catalog = r.match(course)
 			subject = subject_catalog.group(1)
 			catalog = subject_catalog.group(2)
-			schedule = self.get_time_schedule(subject, catalog, section)
+			schedule = self.db.get_time_schedule(subject, catalog, section)
 			for weekly_event in schedule[0]:
-				big_string = add_weekly_event(big_string, weekly_event, subject, catalog, section)
+				big_string = self.add_weekly_event(big_string, weekly_event, subject, catalog, section)
 			for onetime_event in schedule[1]:
-				big_string = add_onetime_event(big_string, onetime_event, subject, catalog, section)
+				big_string = self.add_onetime_event(big_string, onetime_event, subject, catalog, section)
 
 		big_string += "END:VCALENDAR\n"
 		file = open("test_schedule" + str(numb) + ".ics", 'w')
@@ -125,13 +125,13 @@ class Scheduloo:
 		file.close()
 
 
-	def add_weekly_event(s, event, subject, catalog, section):
+	def add_weekly_event(self, s, event, subject, catalog, section):
 		s += "BEGIN:VEVENT\n"
 		start_datetime = "DTSTART:" + datetime.datetime(2016, 1, 3 + event[0][0], 0, 0).strftime('%Y%m%d') + "T" + event[1].strftime('%H%M%S') + "\n"
 		end_datetime = "DTEND:" + datetime.datetime(2016, 1, 3 + event[0][0], 0, 0).strftime('%Y%m%d') + "T" + event[2].strftime('%H%M%S') + "\n"
 		s += start_datetime
 		s += end_datetime
-		rule = "RRULE:FREQ=WEEKLY;UNTIL=20150430T153000Z;BYDAY="
+		rule = "RRULE:FREQ=WEEKLY;UNTIL=20160430T153000Z;BYDAY="
 		for i in event[0]:
 			if (i == 1): rule += "MO,"
 			elif (i == 2): rule += "TU,"
@@ -147,7 +147,7 @@ class Scheduloo:
 		s += "END:VEVENT\n"
 		return s
 
-	def add_onetime_event(s, event, subject, catalog, section):
+	def add_onetime_event(self, s, event, subject, catalog, section):
 		s += "BEGIN:VEVENT\n"
 		start_datetime = "DTSTART:" + event[0].strftime('%Y%m%d') + "T" + event[1].strftime('%H%M%S') + "\n"
 		end_datetime = "DTEND:" + event[0].strftime('%Y%m%d') + "T" + event[2].strftime('%H%M%S') + "\n"

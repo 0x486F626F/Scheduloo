@@ -56,7 +56,7 @@ result = tool.search_all(10000)
 
 for i in range(min(5, len(result))):
 	plan = result[i]
-	tool.generate_ics_file(plan, i)
+	tool.generate_ics_file(plan[0], i)
 	print "Value ", plan[1]
 	plan = sorted(plan[0], key = lambda Vertex: Vertex.name)
 	for section in plan:
