@@ -2,6 +2,7 @@ import datetime
 import evaluation
 import event
 import sets
+import re
 
 class Scheduloo:
 	def __init__(self, db):
@@ -17,11 +18,12 @@ class Scheduloo:
 			self.db.update_course(course[0], course[1])
 	#}}}
 
-	def add_conflict(self, key1, key2):
+	def add_conflict(self, key1, key2): #{{{
 		pair1 = [key1, key2]
 		pair2 = [key2, key1]
 		if pair1 in self.conflicts or pair2 in self.conflicts: return None
 		self.conflicts.append(pair1)
+	#}}}
 
 	def set_solver(self, ratings): #{{{
 		self.solver = evaluation.GraphSolver()
@@ -94,3 +96,66 @@ class Scheduloo:
 	def search_all(self, num_plans = 10):
 		result = self.solver.search_all(self.total_component, num_plans)
 		return result
+
+	def generate_ics_file(self, result, numb):
+		headers = ["BEGIN:VCALENDAR\n",
+				"PRODID:-//Google Inc//Google Calendar 70.9054//EN\n",
+				"VERSION:2.0\n"]
+		big_string = ""
+		for h in headers:
+			big_string += h
+
+		for component in result:
+			name = component.name
+			course = name[:name.find(" ") - 3]
+			section = name[name.find(" ") - 3:]
+			r = re.compile("([a-zA-Z]+)([0-9]+)")
+			subject_catalog = r.match(course)
+			subject = subject_catalog.group(1)
+			catalog = subject_catalog.group(2)
+			schedule = self.db.get_time_schedule(subject, catalog, section)
+			for weekly_event in schedule[0]:
+				big_string = self.add_weekly_event(big_string, weekly_event, subject, catalog, section)
+			for onetime_event in schedule[1]:
+				big_string = self.add_onetime_event(big_string, onetime_event, subject, catalog, section)
+
+		big_string += "END:VCALENDAR\n"
+		file = open("test_schedule" + str(numb) + ".ics", 'w')
+		file.write(big_string)
+		file.close()
+
+
+	def add_weekly_event(self, s, event, subject, catalog, section):
+		s += "BEGIN:VEVENT\n"
+		start_datetime = "DTSTART:" + datetime.datetime(2016, 1, 3 + event[0][0], 0, 0).strftime('%Y%m%d') + "T" + event[1].strftime('%H%M%S') + "\n"
+		end_datetime = "DTEND:" + datetime.datetime(2016, 1, 3 + event[0][0], 0, 0).strftime('%Y%m%d') + "T" + event[2].strftime('%H%M%S') + "\n"
+		s += start_datetime
+		s += end_datetime
+		rule = "RRULE:FREQ=WEEKLY;UNTIL=20160430T153000Z;BYDAY="
+		for i in event[0]:
+			if (i == 1): rule += "MO,"
+			elif (i == 2): rule += "TU,"
+			elif (i == 3): rule += "WE,"
+			elif (i == 4): rule += "TH,"
+			elif (i == 5): rule += "FR,"
+		rule = rule[:-1] + "\n"
+		s += rule
+		location = self.db.get_course_location(subject, catalog, section)
+		s += "LOCARION:" + location[0] + " " + location[1] + "\n"
+		s += "SUMMARY:" + subject + catalog + " " + section.replace(' ', '') + "\n"
+		s += "TRANSP:OPAQUE\n"
+		s += "END:VEVENT\n"
+		return s
+
+	def add_onetime_event(self, s, event, subject, catalog, section):
+		s += "BEGIN:VEVENT\n"
+		start_datetime = "DTSTART:" + event[0].strftime('%Y%m%d') + "T" + event[1].strftime('%H%M%S') + "\n"
+		end_datetime = "DTEND:" + event[0].strftime('%Y%m%d') + "T" + event[2].strftime('%H%M%S') + "\n"
+		s += start_datetime
+		s += end_datetime
+		location = self.db.get_course_location(subject, catalog, section)
+		s += "LOCARION:" + location[0] + " " + location[1] + "\n"
+		s += "SUMMARY:" + subject + catalog + " " + section.replace(' ', '') + "\n"
+		s += "TRANSP:OPAQUE\n"
+		s += "END:VEVENT\n"
+		return s
